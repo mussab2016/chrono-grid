@@ -1,0 +1,36 @@
+:host {
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    text-align: center;
+}
+.page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;   // center horizontally
+    padding-top: 40px;     // nice top spacing (~1 inch = 96px, adjust as you like)
+    gap: 1px;             // space between ctrl__div and card
+}
+
+.ctrl__div {
+    width: 100%;
+    max-width: 500px;      // match card width
+    display: flex;
+    justify-content: flex-end;  // push buttons to the right
+    gap: 8px;                   // spacing between buttons
+}
+
+mat-card {
+    width: 500px;
+    padding: 24px;
+}
+
+.detail__div {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;             // space between form fields
+}
+
+mat-form-field {
+    width: 100%;
+}

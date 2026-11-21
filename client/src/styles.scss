@@ -1,0 +1,187 @@
+// ============================
+// Angular Material Core Import
+// ============================
+@use '@angular/material' as mat;
+
+// ----------------------------
+// External CSS
+// ----------------------------
+
+// ============================
+// Import Your Theme Definitions
+// (Each file must export $light-xxx-theme)
+// ============================
+@use "app/styles/blue-green" as *;
+// -> defines $blue-green-theme
+@use "app/styles/yellow-pink" as *;
+// -> defines $yellow-pink-theme
+@use "app/styles/ocean-breeze" as *;
+// -> defines $ocean-breeze-theme
+@use "app/styles/sunset-glow" as *;
+// -> defines $sunset-glow-theme
+@use "app/styles/forest-harmony" as *;
+// -> defines $forest-harmony-theme
+@use "app/styles/cosmic-night" as *;
+// -> defines $cosmic-night-theme
+@use "app/styles/fiery-passion" as *; // -> defines $fiery-passion-theme
+
+// ============================
+// Angular Material Core Styles
+// ============================
+@include mat.elevation-classes();
+@include mat.app-background();
+
+// ============================
+// Custom Component Theme Mixin
+// ============================
+@mixin my-comp-theme($theme) {
+    // Example custom rules using theme tokens
+    letter-spacing: mat.get-theme-typography($theme, body-large, letter-spacing);
+
+    // Set background color based on theme (dark/light)
+    background-color: mat.get-theme-color($theme, background);
+
+    // Optional: adjust text color to match background
+    color: mat.get-theme-color($theme, on-background);
+
+    .title, .mat-mdc-header-row, .mat-mdc-header-cell {
+        background-color: mat.get-theme-color($theme, tertiary, 90);
+        color: mat.get-theme-color($theme, primary, 30);
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    mat-row.selected {
+        background-color: mat.get-theme-color($theme, primary, 90);
+        color: mat.get-theme-color($theme, on-primary);
+        font-weight: 500;
+        transition: background-color 0.25s ease-in-out;
+        box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .shiny-hover {
+        transition: background-color 0.3s ease, color 0.3s ease;
+
+        &:hover {
+            background-color: mat.get-theme-color($theme, secondary, 80);
+            color: mat.get-theme-color($theme, on-secondary);
+            cursor: pointer;
+        }
+    }
+
+    .app-shell {
+        background-color: mat.get-theme-color($theme, primary);
+        color: mat.get-theme-color($theme, on-primary); // ensures contrast
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .label {
+        color: mat.get-theme-color($theme, primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+
+        &:hover {
+            //background-color: mat.get-theme-color($theme, secondary, 80);
+            color: mat.get-theme-color($theme, secondary);
+            cursor: pointer;
+        }
+    }
+}
+
+// ============================
+// Theme Wrappers
+// (You apply these classes in index.html or body tag dynamically)
+// ============================
+.theme-1 {
+    @include mat.all-component-themes($blue-green-theme);
+    @include my-comp-theme($blue-green-theme);
+}
+
+.theme-2 {
+    @include mat.all-component-themes($yellow-pink-theme);
+    @include my-comp-theme($yellow-pink-theme);
+}
+
+.theme-3 {
+    @include mat.all-component-themes($ocean-breeze-theme);
+    @include my-comp-theme($ocean-breeze-theme);
+}
+
+.theme-4 {
+    @include mat.all-component-themes($sunset-glow-theme);
+    @include my-comp-theme($sunset-glow-theme);
+}
+
+.theme-5 {
+    @include mat.all-component-themes($forest-harmony-theme);
+    @include my-comp-theme($forest-harmony-theme);
+}
+
+.theme-6 {
+    @include mat.all-component-themes($cosmic-night-theme);
+    @include my-comp-theme($cosmic-night-theme);
+}
+
+.theme-7 {
+    @include mat.all-component-themes($fiery-passion-theme);
+    @include my-comp-theme($fiery-passion-theme);
+}
+
+.dark-theme-1 {
+    @include mat.all-component-themes($blue-green-dark-theme);
+    @include my-comp-theme($blue-green-dark-theme);
+}
+
+.dark-theme-2 {
+    @include mat.all-component-themes($yellow-pink-dark-theme);
+    @include my-comp-theme($yellow-pink-dark-theme);
+}
+
+.dark-theme-3 {
+    @include mat.all-component-themes($ocean-breeze-dark-theme);
+    @include my-comp-theme($ocean-breeze-dark-theme);
+}
+
+.dark-theme-4 {
+    @include mat.all-component-themes($sunset-glow-dark-theme);
+    @include my-comp-theme($sunset-glow-dark-theme);
+}
+
+.dark-theme-5 {
+    @include mat.all-component-themes($forest-harmony-dark-theme);
+    @include my-comp-theme($forest-harmony-dark-theme);
+}
+
+.dark-theme-6 {
+    @include mat.all-component-themes($cosmic-night-dark-theme);
+    @include my-comp-theme($cosmic-night-dark-theme);
+}
+
+.dark-theme-7 {
+    @include mat.all-component-themes($fiery-passion-dark-theme);
+    @include my-comp-theme($fiery-passion-dark-theme);
+}
+
+// ============================
+// Global Styles
+// ============================
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+@media print {
+    @page {
+        size: landscape;
+        margin: 8mm;
+    }
+}

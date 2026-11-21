@@ -1,0 +1,69 @@
+:host {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    max-width: 100%;
+    height: 48px;
+    border-radius: 8px;
+    font-size: small;
+    //line-height: 48px;
+}
+
+.container {
+    width: auto;
+}
+
+.row {
+    margin: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+}
+
+.form_container {
+    text-align: center;
+    width: 100%;
+}
+
+.pagination-buttons,
+.page-size-button-container,
+.go-to-page {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 4px;
+}
+
+.page-input {
+    text-align: center;
+    height: 32px;
+    width: 48px;
+    margin: 0 4px;
+    border: 1px solid;
+    border-radius: 4px;
+    box-sizing: border-box;
+
+    /* Hide default browser number spinners for cleaner alignment */
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    -moz-appearance: textfield;
+}
+
+.conf-text {
+    cursor: pointer;
+    white-space: nowrap;
+    padding: 0 4px;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}

@@ -1,0 +1,15 @@
+<div class="circle-container">
+    @for (node of navNodes; track node; let i = $index) {
+        <div class="nav-circle-wrapper">
+            <div class="nav-circle"
+                 [ngStyle]="{'background-color': getCircleColor(i)}"
+                 (click)="goToRoute(node.route)"
+                 [title]="node.name">
+                <i [class]="node.icon"></i>
+            </div>
+            <div class="nav-circle-name" translate>
+                {{ node.name }}
+            </div>
+        </div>
+    }
+</div>

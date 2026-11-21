@@ -1,0 +1,19 @@
+<div class="dialog-container" [ngClass]="data.type">
+    @if (data.type === 'confirm') {
+        <h2 translate>CONFIRMATION</h2>
+        <div class="dialog-actions">
+            <button mat-button color="warn" (click)="close(false)" translate>CANCEL</button>
+                <button mat-button color="primary" (click)="close(true)" translate>CONFIRM</button>
+        </div>
+
+    }
+    @if (data.type === 'error') {
+        <h2 translate>ERROR</h2>
+
+        <div class="dialog-actions">
+            <button mat-raised-button color="warn" (click)="close()" translate>OK</button>
+        </div>
+    }
+
+    <p class="dialog-message" translate>{{ data.msg }}</p>
+</div>

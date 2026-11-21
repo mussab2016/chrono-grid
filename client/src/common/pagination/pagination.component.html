@@ -1,0 +1,66 @@
+<div class="container" [ngStyle]="{ display: lastPage > 1 || model.elementCount >= 5 ? 'flex' : 'none' }">
+    <div class="row">
+        <div class="pagination-buttons b-b-background f-f-text">
+
+            <!-- First / Prev Controls -->
+            <button mat-icon-button class="nav-btn" type="button"
+                    (click)="onRightDoubleButtonClick()"
+                    [disabled]="isRightDisabled()">
+                <i class="fas" [class.fa-chevron-double-left]="!langSrv.rtl" [class.fa-chevron-double-right]="langSrv.rtl"></i>
+            </button>
+
+            <button mat-icon-button class="nav-btn" type="button"
+                    (click)="onRightButtonClick()"
+                    [disabled]="isRightDisabled()">
+                <i class="fas" [class.fa-chevron-left]="!langSrv.rtl" [class.fa-chevron-right]="langSrv.rtl"></i>
+            </button>
+
+            <!-- Page Counter Display -->
+            <span class="margin-start-8 conf-text">{{ model.page }} / {{ lastPage }}</span>
+
+            <!-- Next / Last Controls -->
+            <button mat-icon-button class="nav-btn" type="button"
+                    (click)="onLeftButtonClick()"
+                    [disabled]="isLeftDisabled()">
+                <i class="fas" [class.fa-chevron-right]="!langSrv.rtl" [class.fa-chevron-left]="langSrv.rtl"></i>
+            </button>
+
+            <button mat-icon-button class="nav-btn" type="button"
+                    (click)="onLeftDoubleButtonClick()"
+                    [disabled]="isLeftDisabled()">
+                <i class="fas" [class.fa-chevron-double-right]="!langSrv.rtl" [class.fa-chevron-double-left]="langSrv.rtl"></i>
+            </button>
+
+        </div>
+
+        <!-- Page Size Selector -->
+        <div class="page-size-button-container">
+            <button mat-mini-fab color="primary" class="nav-btn" [matMenuTriggerFor]="perPageMenu" type="button">
+                {{ model.pageSize }}
+            </button>
+        </div>
+
+        <!-- Jump to Page Input -->
+        <div class="go-to-page">
+            <input #pageInput
+                   matInput
+                   type="number"
+                   class="page-input margin-start-4 b-b-background f-f-text"
+                   (keydown)="onInputKeyDown($event)"
+                   (keyup.enter)="onGoToPage()">
+
+            <button mat-mini-fab type="button" color="primary" (click)="onGoToPage()">
+                <i class="fa-solid fa-person-running"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Page Size Menu -->
+<mat-menu [xPosition]="langSrv.rtl ? 'before' : 'after'" yPosition="below" [overlapTrigger]="false" #perPageMenu="matMenu">
+    @for (o of pageSizes; track o) {
+        <button mat-menu-item (click)="model.pageSize = o">
+            {{ o }}
+        </button>
+    }
+</mat-menu>

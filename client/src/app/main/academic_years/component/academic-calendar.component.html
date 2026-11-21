@@ -1,0 +1,285 @@
+<div class="blueprint-pipeline" dir="ltr">
+    <!-- Column 1: Academic Years -->
+    <section class="pipeline-card years-col">
+        <div class="card-header">
+            <div class="header-title">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>{{ 'ACADEMIC_YEARS' | translate }}</span>
+            </div>
+            <span class="count-badge">{{ years().length }}</span>
+        </div>
+
+        <div class="quick-add-box">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-field">
+                <mat-label>{{ 'NEW_ACADEMIC_YEAR' | translate }}</mat-label>
+                <input matInput
+                       [formControl]="newYearCtrl"
+                       placeholder="2026-2027"
+                       (keydown.enter)="addYear()"
+                       autocomplete="off">
+                <button mat-icon-button
+                        matSuffix
+                        type="button"
+                        color="primary"
+                        [disabled]="newYearCtrl.invalid"
+                        (click)="addYear()"
+                        [matTooltip]="'ADD' | translate">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </mat-form-field>
+        </div>
+
+        @if (loadingYears()) {
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        }
+
+        <div class="card-scroll-body">
+            @for (year of years(); track year.id) {
+                <div class="list-node"
+                     [class.active]="selectedYear()?.id === year.id"
+                     (click)="selectYear(year)">
+                    <div class="node-indicator"></div>
+                    <div class="node-info">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span class="node-title">{{ year.yearLabel }}</span>
+                    </div>
+                    <div class="node-actions">
+                        <button mat-icon-button
+                                type="button"
+                                class="danger-btn"
+                                (click)="deleteYear(year, $event)"
+                                [matTooltip]="'DELETE' | translate">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                </div>
+            } @empty {
+                @if (!loadingYears()) {
+                    <div class="empty-state">
+                        <i class="fa-regular fa-folder-open"></i>
+                        <p>{{ 'NO_ACADEMIC_YEARS' | translate }}</p>
+                    </div>
+                }
+            }
+        </div>
+    </section>
+
+    <!-- Column 2: Academic Terms -->
+    <section class="pipeline-card terms-col">
+        <div class="card-header">
+            <div class="header-title">
+                <i class="fa-solid fa-timeline"></i>
+                <span>{{ 'ACADEMIC_TERMS' | translate }}</span>
+            </div>
+            @if (selectedYear(); as year) {
+                <span class="context-pill">{{ year.yearLabel }}</span>
+            }
+        </div>
+
+        @if (selectedYear(); as year) {
+            <form [formGroup]="termForm" (ngSubmit)="saveTerm()" class="term-inline-form">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="sem-num-input">
+                    <mat-label>{{ 'SEMESTER_NUMBER' | translate }}</mat-label>
+                    <input matInput type="number" formControlName="semester" min="1" max="12">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="sem-label-input">
+                    <mat-label>{{ 'LABEL' | translate }}</mat-label>
+                    <input matInput type="text" formControlName="label" placeholder="S1">
+                </mat-form-field>
+
+                <button mat-icon-button color="primary" type="submit" [disabled]="termForm.invalid"
+                        [matTooltip]="(editingTermId() ? 'UPDATE' : 'ADD_TERM') | translate">
+                    <i class="fa-solid" [class.fa-plus]="!editingTermId()" [class.fa-check]="editingTermId()"></i>
+                </button>
+
+                @if (editingTermId()) {
+                    <button mat-icon-button type="button" (click)="cancelEditTerm()"
+                            [matTooltip]="'CANCEL' | translate">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                }
+            </form>
+
+            @if (loadingTerms()) {
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            }
+
+            <div class="card-scroll-body">
+                @for (term of terms(); track term.id) {
+                    <div class="timeline-step"
+                         [class.active]="selectedTerm()?.id === term.id"
+                         [class.editing]="editingTermId() === term.id"
+                         (click)="selectTerm(term)">
+                        <div class="timeline-track">
+                            <div class="step-circle">0{{ term.semester }}</div>
+                            <div class="step-line"></div>
+                        </div>
+
+                        <div class="step-strip">
+                            <div class="strip-info">
+                                <span class="term-pill">{{ term.label }}</span>
+                                <span class="term-sub">{{ 'SEMESTER' | translate }} {{ term.semester }}</span>
+                            </div>
+
+                            <div class="strip-actions">
+                                <button mat-icon-button type="button"
+                                        (click)="$event.stopPropagation(); editTerm(term)"
+                                        [matTooltip]="'EDIT' | translate">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button mat-icon-button type="button" class="danger-btn"
+                                        (click)="$event.stopPropagation(); deleteTerm(term)"
+                                        [matTooltip]="'DELETE' | translate">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                } @empty {
+                    @if (!loadingTerms()) {
+                        <div class="empty-state">
+                            <i class="fa-solid fa-timeline"></i>
+                            <p>{{ 'NO_TERMS_FOR_YEAR' | translate }}</p>
+                        </div>
+                    }
+                }
+            </div>
+        } @else {
+            <div class="empty-state full">
+                <i class="fa-solid fa-arrow-left"></i>
+                <p>{{ 'SELECT_OR_CREATE_YEAR' | translate }}</p>
+            </div>
+        }
+    </section>
+
+    <!-- Column 3: Majors -->
+    <section class="pipeline-card majors-col">
+        <div class="card-header">
+            <div class="header-title">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>{{ 'MAJORS' | translate }}</span>
+            </div>
+            <span class="count-badge">{{ majors().length }}</span>
+        </div>
+
+        @if (loadingMajors()) {
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        }
+
+        @if (selectedYear()) {
+            <div class="card-scroll-body">
+                @for (major of majors(); track major.id) {
+                    <div class="list-node"
+                         [class.active]="selectedMajor()?.id === major.id"
+                         (click)="selectMajor(major)">
+                        <div class="node-indicator"></div>
+                        <div class="major-meta">
+                            <span class="node-title">{{ major.code }}</span>
+                            <span class="node-subtitle">{{ major.name }}</span>
+                        </div>
+                        <div class="node-actions">
+                            <span class="group-counter">{{ majorGroupCounts().get(major.id) ?? 0 }}</span>
+                            <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                        </div>
+                    </div>
+                } @empty {
+                    @if (!loadingMajors()) {
+                        <div class="empty-state">
+                            <p>{{ 'NO_MAJORS_FOUND' | translate }}</p>
+                        </div>
+                    }
+                }
+            </div>
+        } @else {
+            <div class="empty-state full">
+                <i class="fa-solid fa-arrow-left"></i>
+                <p>{{ 'SELECT_OR_CREATE_YEAR' | translate }}</p>
+            </div>
+        }
+    </section>
+
+    <!-- Column 4: Student Groups -->
+    <section class="pipeline-card groups-col">
+        <div class="card-header">
+            <div class="header-title">
+                <i class="fa-solid fa-users-rectangle"></i>
+                <span>{{ 'STUDENT_GROUPS' | translate }}</span>
+            </div>
+            @if (selectedMajor(); as major) {
+                <span class="context-pill">{{ major.code }}</span>
+            }
+        </div>
+
+        @if (selectedYear() && selectedMajor(); as major) {
+            <div class="quick-add-box">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-field">
+                    <mat-label>{{ 'NEW_GROUP_CODE' | translate }}</mat-label>
+                    <input matInput
+                           [formControl]="newGroupCtrl"
+                           placeholder="G1"
+                           (keydown.enter)="addGroup()"
+                           autocomplete="off">
+                    <button mat-icon-button
+                            matSuffix
+                            type="button"
+                            color="primary"
+                            [disabled]="newGroupCtrl.invalid"
+                            (click)="addGroup()"
+                            [matTooltip]="'ADD' | translate">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </mat-form-field>
+            </div>
+
+            @if (loadingGroups()) {
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            }
+
+            <div class="groups-box-wrapper">
+                <div class="groups-rectangles-box">
+                    @for (group of filteredGroups(); track group.id) {
+                        <div class="group-rect"
+                             [class.selected]="selectedGroup()?.id === group.id"
+                             (click)="selectedGroup.set(group)">
+                            <span class="group-code">{{ group.code }}</span>
+                            <button mat-icon-button
+                                    type="button"
+                                    class="rect-delete"
+                                    (click)="deleteGroup(group, $event)"
+                                    [matTooltip]="'DELETE' | translate">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    } @empty {
+                        @if (!loadingGroups()) {
+                            <div class="empty-state">
+                                <i class="fa-solid fa-cubes"></i>
+                                <p>{{ 'NO_GROUPS_FOR_MAJOR' | translate }}</p>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        } @else {
+            <div class="empty-state full">
+                <i class="fa-solid fa-hand-pointer"></i>
+                <p>{{ 'SELECT_MAJOR_TO_MANAGE_GROUPS' | translate }}</p>
+            </div>
+        }
+    </section>
+</div>
+<div class="pipeline-footer-bar">
+    <button mat-flat-button
+            color="primary"
+            type="button"
+            [disabled]="!selectedTerm()"
+            (click)="manageOffering()">
+        <span>{{ 'MANAGE_OFFERINGS' | translate }}</span>
+        @if (selectedTerm(); as term) {
+            <span class="btn-term-badge">({{ term.label }})</span>
+        }
+<!--        <i class="fa-solid fa-arrow-up-right-from-square"></i>-->
+    </button>
+</div>

@@ -1,0 +1,557 @@
+:host {
+    display: block;
+    height: 100%;
+    overflow: hidden;
+}
+
+.offerings-workspace {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100vh;
+    padding: 16px;
+    gap: 16px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* --- Top Bar --- */
+.workspace-topbar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: var(--mat-card-elevated-container-shape, 12px);
+    background-color: var(--mat-card-elevated-container-color, var(--mat-sys-surface-container));
+    box-shadow: var(--mat-card-elevated-container-elevation, 0 2px 6px rgba(0, 0, 0, 0.12));
+
+    .term-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        h2 {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .year-badge {
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            background-color: color-mix(in srgb, var(--mat-sys-primary, #3f51b5) 16%, transparent);
+            color: var(--mat-sys-primary, inherit);
+        }
+    }
+
+    .major-filters {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+
+        .filter-pill {
+            padding: 5px 12px;
+            border-radius: 999px;
+            border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+            background: transparent;
+            color: inherit;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+
+            &.active {
+                background-color: var(--mat-sys-primary, #3f51b5);
+                color: var(--mat-sys-on-primary, #fff);
+                border-color: var(--mat-sys-primary, #3f51b5);
+            }
+        }
+    }
+}
+
+/* --- Main Split Area (Locked to Remaining Viewport Height) --- */
+.board-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* --- Left Box: Student Groups Container (Internal Scroll + Auto-Expand Stones) --- */
+.groups-dock {
+    flex: 0 0 245px;
+    width: 245px;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 14px;
+    box-sizing: border-box;
+    border-radius: var(--mat-card-elevated-container-shape, 12px);
+    background-color: var(--mat-card-elevated-container-color, var(--mat-sys-surface-container-low));
+    box-shadow: var(--mat-card-elevated-container-elevation, 0 2px 6px rgba(0, 0, 0, 0.14));
+    border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+    overflow: hidden;
+
+    .dock-header {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding-bottom: 10px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+        color: var(--mat-sys-primary, inherit);
+
+        .count-pill {
+            margin-inline-start: auto;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background-color: color-mix(in srgb, currentColor 10%, transparent);
+        }
+    }
+}
+
+.group-stones-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    align-content: start;
+    gap: 8px;
+    padding-inline-end: 4px;
+
+    .group-stone {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        padding: 8px 6px;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: center;
+        background-color: color-mix(in srgb, currentColor 6%, transparent);
+        border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+        transition: all 0.15s ease;
+
+        &:hover {
+            border-color: var(--mat-sys-primary, currentColor);
+        }
+
+        .stone-code {
+            font-weight: 700;
+            font-size: 0.82rem;
+            word-break: break-word;
+        }
+
+        .stone-level {
+            font-size: 0.66rem;
+            opacity: 0.65;
+        }
+
+        &.picked {
+            background-color: color-mix(in srgb, var(--mat-sys-primary, currentColor) 20%, transparent);
+            border-color: var(--mat-sys-primary, currentColor);
+        }
+    }
+}
+
+/* --- Right Big Box: Course Offerings & Subjects (Expands Horizontally & Vertically Inside Box) --- */
+.subject-columns-board {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    padding: 14px;
+    box-sizing: border-box;
+    border-radius: var(--mat-card-elevated-container-shape, 12px);
+    background-color: var(--mat-card-elevated-container-color, var(--mat-sys-surface-container-lowest));
+    border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 16px;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.subject-column {
+    flex: 1 0 240px;
+    min-width: 240px;
+    max-width: 300px;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    box-sizing: border-box;
+    border-radius: var(--mat-card-elevated-container-shape, 12px);
+    background-color: var(--mat-card-elevated-container-color, var(--mat-sys-surface-container-low));
+    box-shadow: var(--mat-card-elevated-container-elevation, 0 2px 6px rgba(0, 0, 0, 0.14));
+    border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+    overflow: hidden;
+
+    .column-header {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+
+        .col-title-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 0;
+
+            .col-code {
+                font-weight: 800;
+                font-size: 0.84rem;
+                color: var(--mat-sys-primary, inherit);
+            }
+
+            .col-name {
+                font-size: 0.78rem;
+                font-weight: 600;
+                opacity: 0.85;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+
+    .column-cards-stack {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-inline-end: 4px;
+    }
+}
+
+/* --- Session Cards inside Subject Column --- */
+.square-session-card {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 11px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+
+    &.combined-card {
+        background-color: color-mix(in srgb, var(--mat-sys-primary, #3f51b5) 14%, transparent);
+        border: 1px solid color-mix(in srgb, var(--mat-sys-primary, #3f51b5) 42%, transparent);
+    }
+
+    &.single-card {
+        background-color: color-mix(in srgb, var(--mat-sys-tertiary, #009688) 14%, transparent);
+        border: 1px solid color-mix(in srgb, var(--mat-sys-tertiary, #009688) 42%, transparent);
+    }
+
+    .card-top {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.72rem;
+        font-weight: 700;
+
+        .room-tag {
+            padding: 2px 7px;
+            border-radius: 5px;
+            background-color: color-mix(in srgb, currentColor 10%, transparent);
+        }
+
+        .freq-tag {
+            opacity: 0.78;
+        }
+
+        .delete-card-btn {
+            margin-inline-start: auto;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            font-size: 0.72rem;
+            color: var(--mat-sys-error, #f44336);
+        }
+    }
+
+    .subject-line {
+        font-size: 0.82rem;
+        font-weight: 700;
+        line-height: 1.25;
+    }
+
+    .prof-line {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.78rem;
+        opacity: 0.88;
+    }
+
+    .card-groups-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 2px;
+
+        .mini-group-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 6px;
+            background-color: color-mix(in srgb, currentColor 10%, transparent);
+
+            .remove-g {
+                cursor: pointer;
+                opacity: 0.65;
+
+                &:hover {
+                    opacity: 1;
+                    color: var(--mat-sys-error, #f44336);
+                }
+            }
+        }
+    }
+}
+
+.empty-board-hint {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    opacity: 0.6;
+}
+
+/* --- Builder Modal --- */
+.builder-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.45);
+    padding: 16px;
+}
+
+.square-builder-card {
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    border-radius: 14px;
+    background-color: var(--mat-card-elevated-container-color, var(--mat-sys-surface-container-high));
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+
+    .builder-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+    }
+
+    .builder-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .stones-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        max-height: 150px;
+        overflow-y: auto;
+        margin-top: 6px;
+
+        .select-stone-btn {
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+            background: transparent;
+            color: inherit;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+
+            &.selected {
+                background-color: var(--mat-sys-primary, #3f51b5);
+                color: var(--mat-sys-on-primary, #fff);
+                border-color: var(--mat-sys-primary, #3f51b5);
+            }
+        }
+    }
+
+    .builder-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+}
+
+/* ==========================================
+   RESPONSIVE BREAKPOINTS (Tablets & Mobile)
+   ========================================== */
+
+@media (max-width: 900px) {
+    :host {
+        height: auto;
+        overflow: visible;
+    }
+
+    .offerings-workspace {
+        height: auto;
+        max-height: none;
+        overflow: visible;
+        padding: 12px;
+        gap: 12px;
+    }
+
+    /* Top bar stacks cleanly on smaller screens */
+    .workspace-topbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px;
+
+        .context-left {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .major-filters {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+
+            .filter-pill {
+                flex: 0 0 auto;
+            }
+        }
+
+        button[mat-raised-button] {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* Switch split layout from side-by-side to stacked */
+    .board-body {
+        flex-direction: column;
+        overflow: visible;
+        gap: 12px;
+    }
+
+    /* Left Group Dock becomes a compact horizontal ribbon at the top */
+    .groups-dock {
+        flex: 0 0 auto;
+        width: 100%;
+        height: auto;
+        max-height: 155px;
+        padding: 10px 12px;
+
+        .dock-header {
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+        }
+    }
+
+    .group-stones-grid {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+
+        .group-stone {
+            flex: 0 0 auto;
+            min-width: 68px;
+            padding: 6px 10px;
+        }
+    }
+
+    /* Subject Columns Board: Swipeable horizontal cards on mobile */
+    .subject-columns-board {
+        width: 100%;
+        height: auto;
+        min-height: 360px;
+        padding: 10px;
+        gap: 12px;
+        overflow-x: auto;
+        overflow-y: visible;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .subject-column {
+        flex: 0 0 84vw;
+        min-width: 260px;
+        max-width: 340px;
+        height: auto;
+        max-height: 72vh;
+        scroll-snap-align: start;
+    }
+
+    /* Builder Modal adapts to single-column form on mobile */
+    .square-builder-card {
+        padding: 16px;
+        max-height: 92vh;
+
+        .builder-grid {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+    }
+}

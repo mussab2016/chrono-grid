@@ -1,0 +1,45 @@
+<div class="page-container">
+    <div class="ctrl__div">
+        <button mat-button type="button" (click)="exit()">
+            @if (form()?.touched && form()?.dirty) {
+                <span><i class="fa-solid fa-rotate-right"></i> {{ 'CANCEL' | translate }}</span>
+            } @else {
+                <span><i class="fa-solid fa-rotate-left"></i> {{ 'LIST' | translate }}</span>
+            }
+        </button>
+
+        <button mat-button type="button" (click)="save()" [disabled]="!form() || form()?.invalid">
+            <span><i class="fa-solid fa-floppy-disk"></i> {{ 'SAVE' | translate }}</span>
+        </button>
+    </div>
+
+    @if (form(); as f) {
+        <form [formGroup]="f" (ngSubmit)="save()">
+            <mat-card>
+                <mat-card-content>
+                    <div class="detail__div">
+                        <mat-form-field>
+                            <mat-label translate>CODE</mat-label>
+                            <input matInput type="text" formControlName="code">
+                        </mat-form-field>
+
+                        <mat-form-field>
+                            <mat-label translate>ROOM_TYPE</mat-label>
+                            <ss-auto-complete formControlName="type"
+                                              [model]="roomTypeAutoComplete">
+                            </ss-auto-complete>
+                            <!--                            @if (form().controls['type'].invalid) {-->
+                            <!--                                <mat-error translate>FIELD_REQUIRED</mat-error>-->
+                            <!--                            }-->
+                        </mat-form-field>
+
+                        <mat-form-field class="full-width">
+                            <mat-label translate>DESCRIPTION</mat-label>
+                            <textarea matInput rows="3" formControlName="description"></textarea>
+                        </mat-form-field>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </form>
+    }
+</div>

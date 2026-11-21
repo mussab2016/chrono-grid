@@ -1,0 +1,12 @@
+.datepicker__div {
+    display: flex;
+    align-items: center;
+    //gap: 0.25rem;
+    input.mat-input-element {
+        flex: 0 1 200px; // or max-width: 200px;
+    }
+
+    //::ng-deep .mat-datepicker-toggle {
+    //    flex: 0 0 auto;
+    //}
+}

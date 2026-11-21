@@ -1,0 +1,14 @@
+<div class="language-select-container">
+    <div [matMenuTriggerFor]="menu">
+        <i class="fa-solid fa-globe"></i>
+    </div>
+    <mat-menu [xPosition]="languageSrv.rtl ? 'before' : 'after'" yPosition="below" overlapTrigger="false"
+              #menu="matMenu">
+        @for (l of languages; track l.name) {
+            <div mat-menu-item style="text-align: center; width: 140px" (click)="click(l)">
+                {{ l.name }}
+            </div>
+        }
+
+    </mat-menu>
+</div>

@@ -1,0 +1,119 @@
+<div class="export-container">
+    <!-- Control Toolbar -->
+    <section class="mat-surface-card toolbar no-print" [formGroup]="filterForm">
+        <div class="view-tabs">
+            <button
+                type="button"
+                [class.active]="selectedType() === 'AcademicLevels'"
+                (click)="setViewType('AcademicLevels')">
+                Academic Levels
+            </button>
+
+            <button
+                type="button"
+                [class.active]="selectedType() === 'Class'"
+                (click)="setViewType('Class')">
+                Classrooms
+            </button>
+
+            <button
+                type="button"
+                [class.active]="selectedType() === 'Professor'"
+                (click)="setViewType('Professor')">
+                Professors
+            </button>
+        </div>
+
+        <div class="filter-controls">
+            <!-- Term Selector -->
+            @if (termsList().length > 0) {
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="compact-field">
+                    <mat-label>Academic Term</mat-label>
+                    <mat-select formControlName="termId">
+                        @for (term of termsList(); track term.id) {
+                            <mat-option [value]="term.id">{{ term.label || ('Term ' + term.id) }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            }
+
+            <!-- 1. Academic Levels & Groups -->
+            @if (selectedType() === 'AcademicLevels') {
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="compact-field">
+                    <mat-label>Academic Level</mat-label>
+                    <mat-select formControlName="levelId">
+                        <mat-option [value]="null">All Levels</mat-option>
+                        @for (lvl of academicLevelsList(); track lvl.id) {
+                            <mat-option [value]="lvl.id">{{ lvl.code }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+
+                @if (selectedLevelId() !== null) {
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="compact-field">
+                        <mat-label>Group</mat-label>
+                        <mat-select formControlName="groupNumber">
+                            <mat-option [value]="null">All Groups</mat-option>
+                            @for (grp of filteredGroups(); track grp.id) {
+                                <mat-option [value]="grp.id">{{ grp.code }}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                }
+            }
+
+            <!-- 2. Classrooms -->
+            @if (selectedType() === 'Class') {
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="compact-field">
+                    <mat-label>Classroom</mat-label>
+                    <mat-select formControlName="roomId">
+                        <mat-option [value]="null">All Classrooms</mat-option>
+                        @for (room of roomsList(); track room.id) {
+                            <mat-option [value]="room.id">{{ room.code }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            }
+
+            <!-- 3. Professors: Custom ss-auto-complete -->
+            @if (selectedType() === 'Professor') {
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="compact-field prof-search-field">
+                    <mat-label>Professor</mat-label>
+                    <ss-auto-complete
+                        formControlName="professorId"
+                        [model]="professorAutoComplete">
+                    </ss-auto-complete>
+                </mat-form-field>
+            }
+            <!-- Export Actions -->
+            <button type="button" class="excel-btn" (click)="exportExcel()"
+                    [disabled]="isLoading() || timetable().length === 0">
+                Export Excel
+            </button>
+
+            <button type="button" class="print-btn" (click)="printPage()">
+                Print
+            </button>
+        </div>
+    </section>
+
+    <!-- Main Timetable Stage -->
+    <main class="timetable-stage">
+        @if (isLoading()) {
+            <div class="mat-surface-card status-box">Loading timetable data...</div>
+        } @else if (timetable().length === 0) {
+            <div class="mat-surface-card status-box">No timetable slots available for this term.</div>
+        } @else {
+            <div class="timetable-scroll-box">
+                <app-timetable
+                    [slots]="timetable()"
+                    [rooms]="listToEntityOption(roomsList())"
+                    [professors]="listToEntityOption(professorsList())"
+                    [type]="selectedType()"
+                    [targetId]="activeTargetId()"
+                    [groupFilter]="selectedGroup()">
+                </app-timetable>
+            </div>
+        }
+    </main>
+</div>

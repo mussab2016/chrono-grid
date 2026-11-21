@@ -1,0 +1,33 @@
+<div class="shell app-shell">
+    <div class="shell-left">
+        <!-- Fixed content, logo or back button -->
+        <!--        <img src="API_ICON.jpg" alt="Logo" class="logo" />-->
+        @if (shellService.goBack() != undefined) {
+            <div class="shiny-hover round" [matTooltip]="'GO_BACK' | translate" (click)="goBack()">
+                @if (rtl()){<i class="fas fa-arrow-right"></i>} @else {
+                    <i class="fas fa-arrow-left"></i>
+                }
+            </div>
+        }
+        <h1 translate>{{ shellService.getTitle() }}</h1>
+    </div>
+    <div class="shell-right">
+        <!-- Dynamic buttons, language selector, theme selector -->
+        @for (btn of buttons; track btn) {
+            <button mat-mini-fab color="primary" (click)="executeAction(btn)">
+                @if (btn.icon) {
+                    <i [class]="btn.icon"></i>
+                }
+                @if (btn.matIcon) {
+                    <mat-icon>{{ btn.matIcon }}</mat-icon>
+                }
+            </button>
+        }
+
+        <div class="shiny-hover round" [matTooltip]="'DARK_MODE' | translate" (click)="setDarkMode()">
+            <i class="fas fa-circle-moon"></i>
+        </div>
+        <language-menu class="shiny-hover round" matTooltip="{{ 'LANGUAGE' | translate  }}"></language-menu>
+        <theme-selector class="shiny-hover round" matTooltip="{{ 'THEME' | translate }}"></theme-selector>
+    </div>
+</div>

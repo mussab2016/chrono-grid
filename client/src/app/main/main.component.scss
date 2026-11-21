@@ -1,0 +1,119 @@
+:host{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.title {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    padding-top: 10px;
+    font-size: 2rem;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-bg {
+    display: flex;
+    width: 100px;
+    height: 100px;
+    //background-color: red;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+}
+
+.image {
+    flex-basis: 64px;
+    width: 64px;
+    height: 64px;
+}
+
+.circle-container {
+    display: flex;
+    justify-content: center; // center horizontally
+    align-items: center;     // center vertically if parent has height
+    flex-wrap: wrap;
+    gap: 90px;               // bigger gap between circles
+    margin: 2rem auto;       // optional: center container in page
+    width: 100%;
+    height: 100%;
+}
+
+.nav-circle-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .nav-circle-name {
+        margin-top: 2rem; // gap under the circle
+        font-weight: bold;
+        transition: transform 0.2s, text-shadow 0.2s;
+    }
+
+    .nav-circle:hover + .nav-circle-name {
+        transform: scale(1.1);
+        text-shadow: 0 0 10px rgba(255,255,255,0.8); // shiny effect
+    }
+}
+
+.nav-circle {
+    width: 120px;            // bigger width
+    height: 120px;           // bigger height
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;         // bigger icon
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+}
+
+
+@media (width <= 600px) {
+    .row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .icon-bg {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        width: 150px;
+        height: 150px;
+        margin: 10px;
+    }
+
+    .image {
+        flex-basis: 100px;
+        width: 100px;
+        height: 100px;
+    }
+}
+

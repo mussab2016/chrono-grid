@@ -1,0 +1,141 @@
+<div class="timetable-workspace" dir="ltr">
+    <!-- Top Controls Bar -->
+    <header class="gen-topbar">
+        <div class="grid-params">
+            <a mat-stroked-button routerLink="/course-offerings">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>{{ 'DAYS_COUNT' | translate }}</mat-label>
+                <mat-select [ngModel]="daysCount()" (ngModelChange)="daysCount.set($event)">
+                    <mat-option [value]="5">5 Days (Sun - Thu)</mat-option>
+                    <mat-option [value]="6">6 Days (Sat - Thu)</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>{{ 'SLOTS_PER_DAY' | translate }}</mat-label>
+                <mat-select [ngModel]="slotsPerDay()" (ngModelChange)="slotsPerDay.set($event)">
+                    <mat-option [value]="4">4 Slots</mat-option>
+                    <mat-option [value]="5">5 Slots</mat-option>
+                    <mat-option [value]="6">6 Slots</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>{{ 'FILTER_GROUP' | translate }}</mat-label>
+                <mat-select [ngModel]="filterGroup()" (ngModelChange)="filterGroup.set($event)">
+                    <mat-option value="">{{ 'ALL_GROUPS' | translate }}</mat-option>
+                    @for (g of availableGroups(); track g) {
+                        <mat-option [value]="g">{{ g }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div class="topbar-actions">
+            <button mat-raised-button
+                    color="primary"
+                    type="button"
+                    [disabled]="generating()"
+                    (click)="generateNow()">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>{{ 'GENERATE_TIMETABLE' | translate }}</span>
+            </button>
+        </div>
+    </header>
+
+    @if (generating()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
+    <!-- Temporary Professor Constraints & Preferences Panel -->
+    <section class="prof-constraints-panel">
+        <div class="panel-top">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>{{ 'PROFESSOR_CONSTRAINTS' | translate }}</mat-label>
+                <ss-auto-complete [ngModel]="selectedProfId()" (ngModelChange)="selectedProfId.set($event)"
+                                  [model]="professorAutoComplete">
+                </ss-auto-complete>
+<!--                <mat-select [ngModel]="selectedProfId()" (ngModelChange)="selectedProfId.set($event)">-->
+<!--                    <mat-option [value]="null">&#45;&#45; None &#45;&#45;</mat-option>-->
+<!--                    @for (p of professors(); track p.id) {-->
+<!--                        <mat-option [value]="p.id">{{ p.fullName }}</mat-option>-->
+<!--                    }-->
+<!--                </mat-select>-->
+            </mat-form-field>
+
+            @if (selectedProfId()) {
+                <span class="hint-text">Click cell: Preferred (+10) &rarr; Forbidden (-1) &rarr; Neutral</span>
+            }
+
+            @if (hasPreferences()) {
+                <button mat-button color="warn" type="button" (click)="clearPreferences()">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>Clear All</span>
+                </button>
+            }
+        </div>
+
+        @if (selectedProfId()) {
+            <div class="mini-pref-grid">
+                @for (d of daysArray(); track d) {
+                    <div class="pref-day-row">
+                        <button type="button"
+                                class="day-toggle-btn"
+                                [class.forbidden]="getCellState(d, 0) === -1"
+                                (click)="toggleWholeDayForbidden(d)">
+                            Day {{ d }}
+                        </button>
+                        @for (s of slotsArray(); track s) {
+                            <button type="button"
+                                    class="slot-pref-btn"
+                                    [class.preferred]="getCellState(d, s) === 10"
+                                    [class.forbidden]="getCellState(d, s) === -1"
+                                    (click)="cyclePref(d, s)">
+                                S{{ s }}
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </section>
+
+    <!-- Generated Timetable Matrix (Days x Slots) -->
+    <div class="schedule-matrix-wrap">
+        <table class="schedule-table">
+            <thead>
+            <tr>
+                <th>Day / Slot</th>
+                @for (s of slotsArray(); track s) {
+                    <th>Slot {{ s }}</th>
+                }
+            </tr>
+            </thead>
+            <tbody>
+                @for (d of daysArray(); track d) {
+                    <tr>
+                        <td class="day-label">Day {{ d }}</td>
+                        @for (s of slotsArray(); track s) {
+                            <td class="slot-cell">
+                                @for (item of getSlotsAt(d, s); track item.id) {
+                                    <div class="scheduled-card">
+                                        <div class="card-head">
+                                            <strong>{{ item.subjectCode }}</strong>
+                                            <span class="room-badge">{{ item.roomCode }}</span>
+                                        </div>
+                                        <div class="subject-name">{{ item.subjectName }}</div>
+                                        <div class="prof-text">{{ item.professorName }}</div>
+                                        <div class="groups-text">{{ item.groups.join(', ') }}</div>
+                                    </div>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

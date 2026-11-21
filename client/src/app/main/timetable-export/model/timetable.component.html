@@ -1,0 +1,65 @@
+<div class="timetable-wrapper">
+    <div class="timetable-header-bar no-print">
+        <span class="table-title">{{ displayedTable().cornerLabel }}</span>
+        <button type="button" class="edit-hours-btn" (click)="openSessionsDialog()">
+            Configure Hours (1–10)
+        </button>
+    </div>
+
+    <table class="timetable-grid">
+        <thead>
+        <tr>
+            <th class="corner-cell">{{ displayedTable().cornerLabel }}</th>
+
+            @for (colTitle of displayedTable().columnLabels; track $index) {
+                <th class="col-header">{{ colTitle }}</th>
+            }
+        </tr>
+        </thead>
+
+        <tbody>
+            @for (row of displayedTable().rows; track row.id) {
+                <tr>
+                    <th class="row-header">{{ row.label }}</th>
+
+                    @for (cellItems of row.cells; track $index) {
+                        <td class="grid-cell" [class.is-empty]="cellItems.length === 0">
+                            @for (item of cellItems; track $index) {
+                                <div class="session-line">{{ item.text }}</div>
+                            } @empty {
+                                <span class="empty-dash">—</span>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Sessions Rename Dialog (10 slots) -->
+@if (isSessionsDialogOpen()) {
+    <div class="dialog-backdrop no-print" (click)="closeSessionsDialog()">
+        <div class="dialog-card" (click)="$event.stopPropagation()">
+            <h3>Edit Session Time Labels (Up to 10 Slots)</h3>
+
+            <div class="dialog-grid">
+                @for (sessionText of draftSessions(); track $index) {
+                    <label class="dialog-field">
+                        <span>Slot {{ $index + 1 }}</span>
+                        <input
+                            type="text"
+                            [value]="sessionText"
+                            (input)="updateDraftSession($index, $any($event.target).value)" />
+                    </label>
+                }
+            </div>
+
+            <div class="dialog-footer">
+                <button type="button" (click)="resetDefaultSessions()">Reset Defaults</button>
+                <button type="button" (click)="closeSessionsDialog()">Cancel</button>
+                <button type="button" class="save-btn" (click)="saveSessionsDialog()">Save</button>
+            </div>
+        </div>
+    </div>
+}

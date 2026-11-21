@@ -1,0 +1,13 @@
+<div class="theme-select-container">
+    <div [matMenuTriggerFor]="menu">
+        <i class="fa-solid fa-palette"></i>
+    </div>
+    <mat-menu [xPosition]="languageService.rtl ? 'before' : 'after'" yPosition="below" overlapTrigger="false"
+              #menu="matMenu">
+        @for (theme of themes; track theme) {
+            <div mat-menu-item style="text-align: center; width: 140px" (click)="setTheme(theme)" translate>
+                {{ theme }}
+            </div>
+        }
+    </mat-menu>
+</div>

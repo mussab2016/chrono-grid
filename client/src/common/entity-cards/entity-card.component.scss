@@ -1,0 +1,121 @@
+:host {
+    display: block;
+}
+
+.locker-card {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    padding: 0; /* Remove default mat-card padding so accent strip touches the edge */
+    border-radius: 10px;
+    background-color: var(--mat-card-elevated-container-color, var(--mat-sys-surface-container-low));
+    color: var(--mat-sys-on-surface);
+    border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant, currentColor) 30%, transparent);
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        border-color: color-mix(in srgb, var(--mat-sys-primary) 55%, transparent);
+    }
+
+    &.selected {
+        border-color: var(--mat-sys-primary);
+        background-color: color-mix(in srgb, var(--mat-sys-primary) 10%, var(--mat-card-elevated-container-color, var(--mat-sys-surface-container-low)));
+
+        .card-accent {
+            width: 6px;
+            background-color: var(--mat-sys-primary);
+        }
+    }
+}
+
+.card-accent {
+    width: 4px;
+    background-color: color-mix(in srgb, var(--mat-sys-primary) 50%, transparent);
+    flex-shrink: 0;
+    transition: width 0.16s ease, background-color 0.16s ease;
+}
+
+.card-content {
+    flex: 1;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background-color: color-mix(in srgb, var(--mat-sys-primary) 16%, transparent);
+    color: var(--mat-sys-primary);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--mat-sys-on-surface);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:hover {
+        text-decoration: underline;
+        color: var(--mat-sys-primary);
+    }
+}
+
+.card-subtitle {
+    font-size: 0.8rem;
+    color: var(--mat-sys-on-surface-variant);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 2px;
+}
+
+.card-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-top: 8px;
+    border-top: 1px dashed color-mix(in srgb, var(--mat-sys-outline-variant, currentColor) 35%, transparent);
+}
+
+.field-chip {
+    font-size: 0.76rem;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background-color: color-mix(in srgb, currentColor 7%, transparent);
+    color: var(--mat-sys-on-surface-variant);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    &.badge {
+        background-color: color-mix(in srgb, var(--mat-sys-primary) 14%, transparent);
+        color: var(--mat-sys-primary);
+    }
+}

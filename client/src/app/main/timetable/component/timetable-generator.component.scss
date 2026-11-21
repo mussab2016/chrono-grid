@@ -1,0 +1,164 @@
+.timetable-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+}
+
+.gen-topbar, .prof-constraints-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background-color: var(--mat-card-elevated-container-color, var(--mat-sys-surface-container-low));
+    border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.gen-topbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    .grid-params {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+.panel-top {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .hint-text {
+        font-size: 0.82rem;
+        opacity: 0.78;
+    }
+}
+
+.mini-pref-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .pref-day-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .day-toggle-btn, .slot-pref-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+        background: transparent;
+        color: inherit;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .day-toggle-btn {
+        min-width: 78px;
+        font-weight: 700;
+    }
+
+    .preferred {
+        background-color: rgba(46, 125, 50, 0.22);
+        border-color: #2e7d32;
+        color: #2e7d32;
+    }
+
+    .forbidden {
+        background-color: rgba(211, 47, 47, 0.2);
+        border-color: #d32f2f;
+        color: #d32f2f;
+        text-decoration: line-through;
+    }
+}
+
+.schedule-matrix-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.schedule-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+
+    th, td {
+        border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+        padding: 10px;
+        vertical-align: top;
+        text-align: start;
+    }
+
+    th {
+        background-color: color-mix(in srgb, currentColor 6%, transparent);
+        font-weight: 700;
+        font-size: 0.84rem;
+    }
+
+    .day-label {
+        font-weight: 700;
+        width: 90px;
+        background-color: color-mix(in srgb, currentColor 4%, transparent);
+    }
+
+    .slot-cell {
+        min-width: 140px;
+        height: 90px;
+    }
+}
+
+.scheduled-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    background-color: color-mix(in srgb, var(--mat-sys-primary, #3f51b5) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--mat-sys-primary, #3f51b5) 38%, transparent);
+    font-size: 0.78rem;
+
+    .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .room-badge {
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.72rem;
+            background-color: color-mix(in srgb, currentColor 12%, transparent);
+        }
+    }
+
+    .prof-text {
+        opacity: 0.85;
+    }
+
+    .groups-text {
+        font-weight: 700;
+        font-size: 0.72rem;
+        color: var(--mat-sys-primary, inherit);
+    }
+}

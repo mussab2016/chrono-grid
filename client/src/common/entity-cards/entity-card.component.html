@@ -1,0 +1,94 @@
+<mat-card class="locker-card"
+          [class.selected]="isSelected()"
+          (click)="selectCard.emit(item().id)">
+
+    <div class="card-accent"></div>
+
+    <div class="card-content">
+        <!-- Top Row: Avatar + Main Title + Subtitle -->
+        <div class="card-header">
+            <div class="avatar-box">{{ getInitial() }}</div>
+
+            <div class="header-text">
+                <a class="card-title" (click)="openDetail.emit(item().id); $event.stopPropagation()">
+                    {{ getDisplayValue(schema().titleKey) }}
+                </a>
+
+                @if (schema().subtitleKey; as subKey) {
+                    <span class="card-subtitle">
+            @if (schema().subtitleIcon) {
+                <i [class]="schema().subtitleIcon"></i>
+            }
+                        {{ getDisplayValue(subKey) }}
+          </span>
+                }
+            </div>
+        </div>
+
+        <!-- Bottom Row: Dynamic Extra Fields -->
+        @if (schema().fields?.length) {
+            <div class="card-fields">
+                @for (field of schema().fields; track field.key) {
+                    @if (getDisplayValue(field.key); as val) {
+                        <span class="field-chip" [class.badge]="field.isBadge">
+              @if (field.icon) {
+                  <i [class]="field.icon"></i>
+              }
+                            @if (field.label) {
+                                <small>{{ field.label | translate }}:</small>
+                            }
+                            <strong>{{ val }}</strong>
+            </span>
+                    }
+                }
+            </div>
+        }
+    </div>
+</mat-card>
+<!--<div class="locker-card"-->
+<!--     [class.selected]="isSelected()"-->
+<!--     (click)="selectCard.emit(item().id)">-->
+
+<!--    <div class="card-accent"></div>-->
+
+<!--    <div class="card-content">-->
+<!--        &lt;!&ndash; Top Row: Avatar + Main Title + Subtitle &ndash;&gt;-->
+<!--        <div class="card-header">-->
+<!--            <div class="avatar-box">{{ getInitial() }}</div>-->
+
+<!--            <div class="header-text">-->
+<!--                <a class="card-title" (click)="openDetail.emit(item().id); $event.stopPropagation()">-->
+<!--                    {{ getDisplayValue(schema().titleKey) }}-->
+<!--                </a>-->
+
+<!--                @if (schema().subtitleKey; as subKey) {-->
+<!--                    <span class="card-subtitle">-->
+<!--            @if (schema().subtitleIcon) {-->
+<!--                <i [class]="schema().subtitleIcon"></i>-->
+<!--            }-->
+<!--                        {{ getDisplayValue(subKey) }}-->
+<!--          </span>-->
+<!--                }-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Bottom Row: Dynamic Extra Fields &ndash;&gt;-->
+<!--        @if (schema().fields?.length) {-->
+<!--            <div class="card-fields">-->
+<!--                @for (field of schema().fields; track field.key) {-->
+<!--                    @if (getDisplayValue(field.key); as val) {-->
+<!--                        <span class="field-chip" [class.badge]="field.isBadge">-->
+<!--              @if (field.icon) {-->
+<!--                  <i [class]="field.icon"></i>-->
+<!--              }-->
+<!--                            @if (field.label) {-->
+<!--                                <small>{{ field.label | translate }}:</small>-->
+<!--                            }-->
+<!--                            <strong>{{ val }}</strong>-->
+<!--            </span>-->
+<!--                    }-->
+<!--                }-->
+<!--            </div>-->
+<!--        }-->
+<!--    </div>-->
+<!--</div>-->

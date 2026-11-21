@@ -1,0 +1,237 @@
+<div class="offerings-workspace" dir="ltr">
+    <!-- Top Context Bar -->
+    <header class="workspace-topbar">
+        <div class="context-left">
+            @if (term(); as t) {
+                <div class="term-heading">
+                    <span class="year-badge">{{ t.academicYearLabel }}</span>
+                    <h2>{{ t.label }} &mdash; {{ 'COURSE_OFFERINGS' | translate }}</h2>
+                </div>
+            }
+        </div>
+
+        <!-- Major Filter Chips -->
+        <div class="major-filters">
+            <button type="button"
+                    class="filter-pill"
+                    [class.active]="selectedMajorFilter() === null"
+                    (click)="selectedMajorFilter.set(null)">
+                {{ 'ALL' | translate }}
+            </button>
+            @for (major of majors(); track major.id) {
+                <button type="button"
+                        class="filter-pill"
+                        [class.active]="selectedMajorFilter() === major.id"
+                        (click)="selectedMajorFilter.set(major.id)">
+                    {{ major.code }}
+                </button>
+            }
+        </div>
+
+        <!-- Add Session Square Card Trigger -->
+        <button mat-raised-button
+                color="primary"
+                type="button"
+                (click)="openCreateBuilder()">
+            <i class="fa-solid fa-plus"></i>
+            <span>{{ 'ADD_SESSION' | translate }}</span>
+        </button>
+        <button mat-stroked-button
+                color="accent"
+                type="button"
+                [disabled]="!term()?.id"
+                (click)="goToTimetable()">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>{{ 'TIMETABLE_GENERATOR' | translate }}</span>
+        </button>
+    </header>
+
+    @if (loading()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
+    <!-- Square Builder Card (Subject + Professor AutoComplete + Room + Hours + Groups) -->
+    @if (isBuilderOpen()) {
+        <div class="builder-modal-backdrop" (click)="closeBuilder()">
+            <form [formGroup]="builderForm"
+                  class="square-builder-card"
+                  (click)="$event.stopPropagation()">
+                <div class="builder-card-header">
+                    <h3>
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>{{ (editingSessionUuid() ? 'EDIT_SESSION' : 'NEW_SESSION') | translate }}</span>
+                    </h3>
+                    <button mat-icon-button type="button" (click)="closeBuilder()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="builder-grid">
+                    <!-- Subject AutoComplete -->
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                        <mat-label translate>SUBJECT</mat-label>
+                        <ss-auto-complete formControlName="subjectId"
+                                          [model]="subjectAutoComplete">
+                        </ss-auto-complete>
+                    </mat-form-field>
+
+                    <!-- Professor AutoComplete -->
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                        <mat-label translate>PROFESSOR</mat-label>
+                        <ss-auto-complete formControlName="professorId"
+                                          [model]="professorAutoComplete">
+                        </ss-auto-complete>
+                    </mat-form-field>
+
+                    <!-- Required Room Type -->
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                        <mat-label translate>ROOM_TYPE</mat-label>
+                        <mat-select formControlName="requiredRoomTypeId">
+                            @for (rt of roomTypes(); track rt.id) {
+                                <mat-option [value]="rt.id">{{ rt.code }}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Weekly Hours / Sessions -->
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                        <mat-label translate>WEEKLY_SESSIONS</mat-label>
+                        <input matInput type="number" formControlName="weeklySessions" min="1" max="10">
+                    </mat-form-field>
+                </div>
+
+                <!-- Combined vs Separate Toggle -->
+                @if (!editingSessionUuid()) {
+                    <div class="split-toggle-row">
+                        <mat-slide-toggle formControlName="isSplitPerGroup" color="accent">
+                            {{ (builderForm.value.isSplitPerGroup ? 'SEPARATE_PER_GROUP' : 'COMBINED_SESSION') | translate }}
+                        </mat-slide-toggle>
+                    </div>
+                }
+
+                <!-- Selectable Student Groups Chips -->
+                <div class="builder-groups-selector">
+                    <span class="selector-hint">{{ 'SELECT_GROUPS' | translate }}:</span>
+                    <div class="stones-wrap">
+                        @for (group of visibleGroups(); track group.id) {
+                            <button type="button"
+                                    class="select-stone-btn"
+                                    [class.selected]="selectedGroupIds().includes(group.id)"
+                                    (click)="toggleGroupSelection(group.id)">
+                                {{ group.code }}
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <div class="builder-actions">
+                    <button mat-raised-button
+                            color="primary"
+                            type="button"
+                            (click)="saveSessionBlock()"
+                            [disabled]="builderForm.invalid || selectedGroupIds().length === 0">
+                        <i class="fa-solid fa-check"></i>
+                        <span>{{ (editingSessionUuid() ? 'UPDATE' : 'SAVE') | translate }}</span>
+                    </button>
+                    <button mat-button type="button" (click)="closeBuilder()">
+                        {{ 'CANCEL' | translate }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    }
+
+    <!-- Main Board Layout: Left Group Dock (Unchanged) + Right Subject Columns -->
+    <div class="board-body">
+        <!-- Left Sticky Dock: Student Group Stones (Kept Identical) -->
+        <aside class="groups-dock">
+            <div class="dock-header">
+                <i class="fa-solid fa-cubes"></i>
+                <span>{{ 'STUDENT_GROUPS' | translate }}</span>
+                <span class="count-pill">{{ visibleGroups().length }}</span>
+            </div>
+
+            <div class="group-stones-grid">
+                @for (group of visibleGroups(); track group.id) {
+                    <div class="group-stone"
+                         [class.picked]="selectedGroupIds().includes(group.id)"
+                         (click)="onDockGroupClick(group.id)">
+                        <!--                         (click)="isBuilderOpen() && toggleGroupSelection(group.id)">-->
+                        <span class="stone-code">{{ group.code }}</span>
+                        @if (group.levelCode) {
+                            <span class="stone-level">{{ group.levelCode }}</span>
+                        }
+                    </div>
+                }
+            </div>
+        </aside>
+
+        <!-- Right Columns: One Column per Active Subject -->
+        <section class="subject-columns-board">
+            @for (col of subjectColumns(); track col.subjectId) {
+                <div class="subject-column">
+                    <!-- Column Header: Subject Name & Quick Add in Same Subject -->
+                    <div class="column-header">
+                        <div class="col-title-meta">
+                            <span class="col-code">{{ col.subjectCode }}</span>
+                            <span class="col-name">{{ col.subjectName }}</span>
+                        </div>
+                        <button mat-icon-button
+                                type="button"
+                                (click)="openCreateBuilder(col.subjectId)"
+                                [matTooltip]="'ADD_SESSION' | translate">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+
+                    <!-- Square Session Cards Linked by Physical sessionUuid -->
+                    <div class="column-cards-stack">
+                        @for (block of col.blocks; track block.sessionUuid) {
+                            <div class="square-session-card"
+                                 [class.combined-card]="block.groups.length > 1"
+                                 [class.single-card]="block.groups.length === 1"
+                                 (click)="openEditBuilder(block)">
+                                <div class="card-top">
+                                    <span class="room-tag">{{ block.roomTypeName }}</span>
+                                    <span class="freq-tag">{{ block.weeklySessions }}x / wk</span>
+                                    <button mat-icon-button
+                                            type="button"
+                                            class="delete-card-btn"
+                                            (click)="deleteBlock(block.sessionUuid, $event)">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+
+                                <div class="subject-line">{{ block.subjectName }}</div>
+
+                                <div class="prof-line">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                    <span>{{ block.professorName }}</span>
+                                </div>
+
+                                <div class="card-groups-chips">
+                                    @for (g of block.groups; track g.offeringId) {
+                                        <span class="mini-group-chip">
+                                            {{ g.code }}
+                                            @if (block.groups.length > 1) {
+                                                <i class="fa-solid fa-xmark remove-g"
+                                                   (click)="removeSingleGroupFromBlock(g.offeringId, $event)"></i>
+                                            }
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            } @empty {
+                @if (!loading()) {
+                    <div class="empty-board-hint">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <p>{{ 'NO_OFFERINGS_YET' | translate }}</p>
+                    </div>
+                }
+            }
+        </section>
+    </div>
+</div>

@@ -1,0 +1,93 @@
+<div class="page-container">
+    <div class="ctrl__div">
+        <div class="action-buttons">
+            <button mat-button (click)="add()">
+                <span><i class="fa-solid fa-plus"></i> {{ 'ADD' | translate }}</span>
+            </button>
+            <button mat-button (click)="deleteSelected()" [disabled]="!selected()">
+                <span><i class="fa-solid fa-minus"></i> {{ 'DELETE' | translate }}</span>
+            </button>
+
+            <!-- View Mode Switcher -->
+            <div class="view-switcher">
+                <button mat-icon-button
+                        type="button"
+                        [class.active-view]="viewMode() === 'table'"
+                        (click)="toggleViewMode('table')"
+                        [title]="'TABLE_VIEW' | translate">
+                    <i class="fa-solid fa-table-list"></i>
+                </button>
+                <button mat-icon-button
+                        type="button"
+                        [class.active-view]="viewMode() === 'cards'"
+                        (click)="toggleViewMode('cards')"
+                        [title]="'CARDS_VIEW' | translate">
+                    <i class="fa-solid fa-grip"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Field -->
+        <div class="search-box">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" style="width: 100%">
+                <mat-label>{{ 'SEARCH' | translate }}</mat-label>
+                <input matInput
+                       [formControl]="filter"
+                       placeholder="{{ 'SEARCH_PLACEHOLDER' | translate }}"
+                       autocomplete="off">
+                <mat-icon matPrefix>search</mat-icon>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <!-- MODE 1: Classic Compact Table -->
+    @if (viewMode() === 'table') {
+        <div class="table_div">
+            <mat-table [dataSource]="data() ?? []"
+                       matSort
+                       (matSortChange)="sort($event)"
+                       class="main-table">
+
+                <ng-container matColumnDef="code">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header translate>CODE</mat-header-cell>
+                    <mat-cell *matCellDef="let e" class="label">
+                        <a (click)="showDetail(e.id); $event.stopPropagation()">{{ e.code }}</a>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header translate>NAME</mat-header-cell>
+                    <mat-cell *matCellDef="let e">
+                        {{ e.name }}
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                <mat-row class="selectable"
+                         [class.selected]="row.id === selected()"
+                         (click)="select(row.id)"
+                         *matRowDef="let row; columns: displayedColumns;">
+                </mat-row>
+            </mat-table>
+        </div>
+    }
+
+    <!-- MODE 2: Rich Rectangular Cards Grid -->
+    @if (viewMode() === 'cards') {
+        <div class="locker-grid">
+            @for (lvl of data() ?? []; track lvl.id) {
+                <app-entity-card
+                    [item]="lvl"
+                    [schema]="cardSchema"
+                    [isSelected]="lvl.id === selected()"
+                    (selectCard)="select($event)"
+                    (openDetail)="showDetail($event)">
+                </app-entity-card>
+            }
+        </div>
+    }
+
+    <div class="pagination-container b-b-background">
+        <ss-pagination [paginationModel]="pagination!"></ss-pagination>
+    </div>
+</div>
